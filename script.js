@@ -11,12 +11,15 @@ const backspaceKey = document.querySelector(".back-space");
 
 
 inputText.value = "0";
+let rawInput = "0";
 let isOperatorKeyClicked = false;
 let firstNumber = null;
 let secondNumber = 0;
 let currentOperator = "";
 let result = 0;
-
+const formatter = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 16
+});
 
 
 numberKeys.forEach((button) => {
@@ -26,21 +29,70 @@ numberKeys.forEach((button) => {
             displayEntered.textContent = "";
         }
         
-        if (isOperatorKeyClicked) {
+        /*if (isOperatorKeyClicked) {
             inputText.value = "";
             isOperatorKeyClicked = false;
 
         }
         
-        if (inputText.value === "0") {
-            inputText.value = "";
+        if (button.textContent === ".") {
+            if (inputText.value.includes(".")) {
+                return;
+            }
+
+            if (inputText.value === "" || inputText.value === "0") {
+                inputText.value = "0."
+            }
+            
         }
-         
-        if (inputText.value.length <= 16) {
-            let rawNumber = inputText.value.replaceAll(',','');   
-            rawNumber += button.textContent;
-            inputText.value = Number(rawNumber).toLocaleString('en-US');
+        else {
+            if (inputText.value === "0") {
+                inputText.value = "";
+            }
+            
         }
+
+        inputText.value += button.textContent;*/
+
+
+        /*if (inputText.value.length <= 16) {
+            let rawNumber = inputText.value.replaceAll(',','');
+            if (rawNumber.endsWith(".")) {
+                inputText.value = rawNumber;
+            }
+            else {
+                rawNumber += button.textContent;
+                inputText.value = formatter.format(parseFloat(rawNumber));
+            } 
+            
+        }*/
+
+        if (isOperatorKeyClicked) {
+            rawInput = "";
+            isOperatorKeyClicked = false;
+
+        }
+        
+        if (button.textContent === ".") {
+            if (rawInput.includes(".")) {
+                return;
+            }
+
+            /*if (rawInput === "" || rawInput === "0") {
+                rawInput = "0."
+            }*/
+            
+        }
+        else {
+            if (rawInput === "0") {
+                rawInput = "";
+            }
+            
+        }
+
+        rawInput += button.textContent;
+
+        formatRawInput();
 
  
     });
@@ -67,7 +119,7 @@ operatorKey.forEach((button) => {
             else {
                 result = mathOperations(currentOperator, firstNumber, secondNumber);
                 firstNumber = result;
-                inputText.value = result;
+                inputText.value = formatter.format(result);
             }
             
             /*inputText.value = inputTextResult(currentOperator, secondNumber, result);*/
@@ -88,13 +140,14 @@ equalsKey.addEventListener('click', () => {
      
     if (firstNumber !== null && currentOperator !== "") {
         //firstNumber and currentOperator are already saved in memory
-        secondNumber = Number(inputText.value);
+        secondNumber = Number(inputText.value.replaceAll(',',''));
         if (currentOperator === "÷" && secondNumber === 0) {
             inputText.value = "Heh, cannot divide by zero"
         }
         else {
             result = mathOperations(currentOperator, Number(firstNumber), secondNumber);
-            inputText.value = Number(result).toLocaleString('en-US');
+            //inputText.value = Number(result).toLocaleString('en-US');
+            inputText.value = formatter.format(result);
            
         }
 
@@ -113,11 +166,13 @@ clearEntry.addEventListener('click', () => {
     if (displayEntered.textContent.includes("=")) {    
         displayEntered.textContent = "";
         resetEverything();
-
+        
     }
-
+    
     inputText.value = "0";
-
+    rawInput = "0";
+    
+    
 });
 
 
@@ -130,15 +185,42 @@ clearAll.addEventListener('click', () => {
 
 
 backspaceKey.addEventListener('click', () => {
-    if (inputText.value.length > 0) {
+    /*if (inputText.value.length > 0) {
         inputText.value = inputText.value.slice(0,-1);
     }
     
     if (inputText.value === "") {
         inputText.value = "0";
+    }*/
+
+    if (inputText.value.length > 0) {
+        rawInput = rawInput.slice(0, -1);
+    } 
+
+    if (rawInput === "") {
+        rawInput = "0";
     }
 
+    formatRawInput();
+
+
 });
+
+
+function formatRawInput() {
+    if (rawInput.includes(".")) {
+        //inputText.value = rawInput;
+        
+        const [wholeNumber, decimal] = rawInput.split('.');
+        const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0);
+        inputText.value = `${formattedWholeNumber}.${decimal}`;
+        
+    }
+    else {
+        inputText.value = formatter.format(parseFloat(rawInput));
+    }
+
+}
 
 
 
@@ -165,7 +247,7 @@ function mathOperations(operator, firstNumber, secondNumber) {
 }
 
 
-function inputTextResult(currentOperator, secondNumber, result) {
+/*function inputTextResult(currentOperator, secondNumber, result) {
     
     if (currentOperator === "÷" && secondNumber === 0) {
         return "Cannot divide by zero";
@@ -176,14 +258,16 @@ function inputTextResult(currentOperator, secondNumber, result) {
     }
 
 
-}
+}*/
 
 
 
-function resetEverything() {
+function resetEverything() {  
+    rawInput = "0";
     firstNumber = null;
     secondNumber = 0;
     currentOperator = "";
     result = 0;
+    
 
 }
