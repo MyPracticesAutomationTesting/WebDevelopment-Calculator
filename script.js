@@ -152,10 +152,10 @@ function mathOperations(operator, firstNumber, secondNumber) {
         case "÷" :
             result = firstNumber / secondNumber;
             break;
-        case "x" :
+        case "×" :
             result = firstNumber * secondNumber;
             break;
-        case "-" :
+        case "−" :
             result = firstNumber - secondNumber;
             break;
         case "+" :
