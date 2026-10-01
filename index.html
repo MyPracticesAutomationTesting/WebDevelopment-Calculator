@@ -12,56 +12,51 @@
             <div class="display-as-entered"></div>
             <input id="input-text" type="text" autofocus>
         </div>
-        <div class="buttons-containers">
-            <div class="buttons">
-                <button class="unary">%</button>
+        <div class="buttons-container">
+            <div class="buttons-row">
+                <button class="unary percent">%</button>
                 <button class="clear-entry">CE</button>
                 <button class="clear-all">C</button>
-                <button class="back-space"><</button>
+                <button class="back-space">⬅️</button>
             </div>
-            <div class="buttons">
-                <button class="unary">
-                    <span class=superscript>1</span>
-                    /x
+            <div class="buttons-row">
+                <button class="unary one-over-input">
+                    <span class="superscript">1</span>/x
                 </button>
-                <button class="unary">
+                <button class="unary squared">
                     x<span class="superscript">2</span>
                 </button>
-                <button class="unary">
-                    <span class=superscript>2</span>
-                    &radic;<span class="sqrt-line">x</span>
+                <button class="unary square-root">
+                    <span class=superscript>2</span>&radic;<span class="sqrt-line">x</span>
                 </button>
                 <button class="operator divide">÷</button>
             </div>
-            <div class="buttons">
+            <div class="buttons-row">
                 <button class="number">7</button>
                 <button class="number">8</button>
                 <button class="number">9</button>
-                <button class="operator multiply">x</button>
+                <button class="operator multiply">&times;</button>
             </div>
-            <div class="buttons">
+            <div class="buttons-row">
                 <button class="number">4</button>
                 <button class="number">5</button>
                 <button class="number">6</button>
-                <button class="operator" subtract>-</button>
+                <button class="operator subtract">&minus;</button>
             </div>
-            <div class="buttons">
+            <div class="buttons-row">
                 <button class="number">1</button>
                 <button class="number">2</button>
                 <button class="number">3</button>
-                <button class="operator add" >+</button>
+                <button class="operator add">+</button>
             </div>
-            <div class="buttons">
-                <button class="unary">
-                    <span class="superscript">+</span>
-                    /-
-                </button>
+            <div class="buttons-row">
+                <button class="sign">+/&minus;</button>
                 <button class="number">0</button>
-                <button class="number">.</button>
+                <button class="number decimal">.</button>
                 <button class="equals">=</button>
             </div>
         </div>
-
+        <div class="footer">TOP project by Cherry © 2026</div>
     </div>
 
     <script type="module" src="./script.js"></script>

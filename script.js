@@ -8,6 +8,11 @@ const equalsKey = document.querySelector(".equals");
 const clearEntry = document.querySelector(".clear-entry");
 const clearAll = document.querySelector(".clear-all");
 const backspaceKey = document.querySelector(".back-space");
+const flipNumberSign = document.querySelector(".sign");
+const percentOf = document.querySelector(".percent");
+const oneOverNumber = document.querySelector(".one-over-input");
+const squareOf = document.querySelector(".squared");
+const squareRoot = document.querySelector(".square-root");
 
 
 inputText.value = "0";
@@ -22,6 +27,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 });
 
 
+
 numberKeys.forEach((button) => {
     button.addEventListener('click', () => {
     
@@ -29,44 +35,7 @@ numberKeys.forEach((button) => {
             displayEntered.textContent = "";
         }
         
-        /*if (isOperatorKeyClicked) {
-            inputText.value = "";
-            isOperatorKeyClicked = false;
-
-        }
-        
-        if (button.textContent === ".") {
-            if (inputText.value.includes(".")) {
-                return;
-            }
-
-            if (inputText.value === "" || inputText.value === "0") {
-                inputText.value = "0."
-            }
-            
-        }
-        else {
-            if (inputText.value === "0") {
-                inputText.value = "";
-            }
-            
-        }
-
-        inputText.value += button.textContent;*/
-
-
-        /*if (inputText.value.length <= 16) {
-            let rawNumber = inputText.value.replaceAll(',','');
-            if (rawNumber.endsWith(".")) {
-                inputText.value = rawNumber;
-            }
-            else {
-                rawNumber += button.textContent;
-                inputText.value = formatter.format(parseFloat(rawNumber));
-            } 
-            
-        }*/
-
+       
         if (isOperatorKeyClicked) {
             rawInput = "";
             isOperatorKeyClicked = false;
@@ -78,10 +47,6 @@ numberKeys.forEach((button) => {
                 return;
             }
 
-            /*if (rawInput === "" || rawInput === "0") {
-                rawInput = "0."
-            }*/
-            
         }
         else {
             if (rawInput === "0") {
@@ -98,6 +63,29 @@ numberKeys.forEach((button) => {
     });
      
 });
+
+
+
+
+function formatRawInput() {
+    
+    const [wholeNumber, decimal] = rawInput.split('.');
+    
+    if (wholeNumber.length <= 16) { //limit to only 16 digits like the Windows calculator
+        if (rawInput.includes(".")) {
+            if (decimal.length <= 16) { //limit to only 16 digits like the Windows calculator
+                const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0);
+                inputText.value = `${formattedWholeNumber}.${decimal}`;
+            }
+            
+        }
+        else {
+            inputText.value = formatter.format(parseFloat(rawInput));
+        }
+
+    }
+    
+}
 
 
 operatorKey.forEach((button) => {
@@ -119,11 +107,10 @@ operatorKey.forEach((button) => {
             else {
                 result = mathOperations(currentOperator, firstNumber, secondNumber);
                 firstNumber = result;
-                inputText.value = formatter.format(result);
+                inputText.value = formatMassiveNumberResult(result);
+                
             }
             
-            /*inputText.value = inputTextResult(currentOperator, secondNumber, result);*/
-
         }
         
         currentOperator = button.textContent;
@@ -146,13 +133,10 @@ equalsKey.addEventListener('click', () => {
         }
         else {
             result = mathOperations(currentOperator, Number(firstNumber), secondNumber);
-            //inputText.value = Number(result).toLocaleString('en-US');
-            inputText.value = formatter.format(result);
+            inputText.value = formatMassiveNumberResult(result);
            
         }
 
-        /*inputText.value = Number(inputTextResult(currentOperator, secondNumber, result)).toLocaleString('en-US');*/
-        
         displayEntered.textContent = `${firstNumber} ${currentOperator} ${secondNumber} =`;
         resetEverything(); 
         isOperatorKeyClicked = true;
@@ -160,68 +144,6 @@ equalsKey.addEventListener('click', () => {
      }
 
 });
-
-
-clearEntry.addEventListener('click', () => {
-    if (displayEntered.textContent.includes("=")) {    
-        displayEntered.textContent = "";
-        resetEverything();
-        
-    }
-    
-    inputText.value = "0";
-    rawInput = "0";
-    
-    
-});
-
-
-clearAll.addEventListener('click', () => {
-    inputText.value = "0";
-    displayEntered.textContent = "";
-    resetEverything();
-
-});
-
-
-backspaceKey.addEventListener('click', () => {
-    /*if (inputText.value.length > 0) {
-        inputText.value = inputText.value.slice(0,-1);
-    }
-    
-    if (inputText.value === "") {
-        inputText.value = "0";
-    }*/
-
-    if (inputText.value.length > 0) {
-        rawInput = rawInput.slice(0, -1);
-    } 
-
-    if (rawInput === "") {
-        rawInput = "0";
-    }
-
-    formatRawInput();
-
-
-});
-
-
-function formatRawInput() {
-    if (rawInput.includes(".")) {
-        //inputText.value = rawInput;
-        
-        const [wholeNumber, decimal] = rawInput.split('.');
-        const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0);
-        inputText.value = `${formattedWholeNumber}.${decimal}`;
-        
-    }
-    else {
-        inputText.value = formatter.format(parseFloat(rawInput));
-    }
-
-}
-
 
 
 function mathOperations(operator, firstNumber, secondNumber) {
@@ -247,19 +169,101 @@ function mathOperations(operator, firstNumber, secondNumber) {
 }
 
 
-/*function inputTextResult(currentOperator, secondNumber, result) {
-    
-    if (currentOperator === "÷" && secondNumber === 0) {
-        return "Cannot divide by zero";
+function formatMassiveNumberResult(result) {
+    if (Math.abs(result) >= 1e15) { //to take care of massive results just like in Windows calculator
+        return result.toExponential(15);
     }
     else {
-        return result;
+        return formatter.format(result);
+    }
+    
+}
 
+
+flipNumberSign.addEventListener('click', () => {
+    let currentValue = inputText.value.replaceAll(',','');
+    currentValue = currentValue * -1;
+    inputText.value = formatMassiveNumberResult(currentValue);
+    
+});
+
+
+//this is actually a bit different vs the % behavior of Windows calculator, NOT sure IF Windows calculator is intended to work the way it works now, OR maybe they have a bug?
+//e.g. in Windows calculator, try clicking a number and clicking %
+percentOf.addEventListener('click', () => {
+    let currentValue = inputText.value.replaceAll(',','');
+    currentValue = currentValue / 100;
+    inputText.value = formatMassiveNumberResult(currentValue);
+    
+
+});
+
+
+oneOverNumber.addEventListener('click', () => {
+    let currentValue = inputText.value.replaceAll(',','');
+    displayEntered.textContent = `1/(${currentValue})`;
+    currentValue = 1 / currentValue;
+    inputText.value = formatMassiveNumberResult(currentValue);
+    
+
+});
+
+
+squareOf.addEventListener('click', () => {
+    let currentValue = inputText.value.replaceAll(',','');
+    displayEntered.textContent = `sqr(${currentValue})`;
+    currentValue = currentValue ** 2;
+    inputText.value = formatMassiveNumberResult(currentValue);
+
+
+});
+
+
+squareRoot.addEventListener('click', () => {
+    let currentValue = inputText.value.replaceAll(',','');
+    displayEntered.textContent = `√(${currentValue})`;
+    currentValue = Math.sqrt(currentValue);
+    inputText.value = formatMassiveNumberResult(currentValue);
+
+});
+
+
+
+clearEntry.addEventListener('click', () => {
+    if (displayEntered.textContent.includes("=")) {    
+        displayEntered.textContent = "";
+        resetEverything();
+        
+    }
+    //reset only these for the current entry
+    inputText.value = "0";
+    rawInput = "0";
+    
+    
+});
+
+
+clearAll.addEventListener('click', () => {
+    inputText.value = "0";
+    displayEntered.textContent = "";
+    resetEverything();
+
+});
+
+
+backspaceKey.addEventListener('click', () => {
+    if (inputText.value.length > 0) {
+        rawInput = rawInput.slice(0, -1);
+    } 
+
+    if (rawInput === "") {
+        rawInput = "0";
     }
 
+    formatRawInput();
 
-}*/
 
+});
 
 
 function resetEverything() {  
@@ -271,3 +275,7 @@ function resetEverything() {
     
 
 }
+
+
+
+
