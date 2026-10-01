@@ -107,6 +107,11 @@ button {
     font-size: 0.6em;
 }
 
+.sqrt-line {
+    border-top: 2px solid black;
+}
+
+
 .clear-entry,
 .clear-all,
 .back-space,

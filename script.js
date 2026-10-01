@@ -28,42 +28,48 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 
 
+
 numberKeys.forEach((button) => {
-    button.addEventListener('click', () => {
-    
-        if (firstNumber === null) {
-            displayEntered.textContent = "";
-        }
-        
-       
-        if (isOperatorKeyClicked) {
-            rawInput = "";
-            isOperatorKeyClicked = false;
-
-        }
-        
-        if (button.textContent === ".") {
-            if (rawInput.includes(".")) {
-                return;
-            }
-
-        }
-        else {
-            if (rawInput === "0") {
-                rawInput = "";
-            }
-            
-        }
-
-        rawInput += button.textContent;
-
-        formatRawInput();
-
+    button.addEventListener('click', (event) => {
+      
+        numberInputs(event.target.textContent);
  
     });
      
 });
 
+
+
+function numberInputs(numberText) {
+    if (firstNumber === null) {
+        displayEntered.textContent = "";
+    }
+       
+    if (isOperatorKeyClicked) {
+        rawInput = "";
+        isOperatorKeyClicked = false;
+
+    }
+        
+    if (numberText === ".") {
+        if (rawInput.includes(".")) {
+            return;
+        }
+
+    }
+    else {
+        if (rawInput === "0") {
+            rawInput = "";
+        }
+            
+    }
+
+    rawInput += numberText;
+
+    formatRawInput();
+
+
+}
 
 
 
@@ -88,48 +94,60 @@ function formatRawInput() {
 }
 
 
+
 operatorKey.forEach((button) => {
 
-    button.addEventListener('click', () => {
-        
-        const currentInput = Number(inputText.value.replaceAll(',',''));
-        
-        if (firstNumber === null) {
-            firstNumber = currentInput;
-            
-        }
-        else if (!isOperatorKeyClicked) {
-            secondNumber = currentInput;
-            
-            if (currentOperator === "÷" && secondNumber === 0) {
-                inputText.value = "Heh, cannot divide by zero"
-            }
-            else {
-                result = mathOperations(currentOperator, firstNumber, secondNumber);
-                firstNumber = result;
-                inputText.value = formatMassiveNumberResult(result);
-                
-            }
-            
-        }
-        
-        currentOperator = button.textContent;
-        displayEntered.textContent = `${firstNumber} ${currentOperator}`;
-        isOperatorKeyClicked = true;
-
+    button.addEventListener('click', (event) => {
+        operatorInputs(event.target.textContent);
 
     });
 
 });
 
 
+function operatorInputs(operator) {
+    
+    const currentInput = Number(inputText.value.replaceAll(',',''));
+        
+    if (firstNumber === null) {
+        firstNumber = currentInput;
+            
+    }
+    else if (!isOperatorKeyClicked) {
+        secondNumber = currentInput;
+            
+        if (currentOperator === "÷" && secondNumber === 0) {
+            inputText.value = "Heh, cannot divide by zero";
+        }
+        else {
+            result = mathOperations(currentOperator, firstNumber, secondNumber);
+            firstNumber = result;
+            inputText.value = formatMassiveNumberResult(result);
+                
+        }
+            
+    }
+        
+    currentOperator = operator;
+    displayEntered.textContent = `${firstNumber} ${currentOperator}`;
+    isOperatorKeyClicked = true;
+
+}
+
+
+
 equalsKey.addEventListener('click', () => {
-     
+    equalsOperator();
+
+});
+
+
+function equalsOperator() {
     if (firstNumber !== null && currentOperator !== "") {
         //firstNumber and currentOperator are already saved in memory
         secondNumber = Number(inputText.value.replaceAll(',',''));
         if (currentOperator === "÷" && secondNumber === 0) {
-            inputText.value = "Heh, cannot divide by zero"
+            inputText.value = "Heh, cannot divide by zero";
         }
         else {
             result = mathOperations(currentOperator, Number(firstNumber), secondNumber);
@@ -143,7 +161,8 @@ equalsKey.addEventListener('click', () => {
 
      }
 
-});
+}
+
 
 
 function mathOperations(operator, firstNumber, secondNumber) {
@@ -191,12 +210,18 @@ flipNumberSign.addEventListener('click', () => {
 //this is actually a bit different vs the % behavior of Windows calculator, NOT sure IF Windows calculator is intended to work the way it works now, OR maybe they have a bug?
 //e.g. in Windows calculator, try clicking a number and clicking %
 percentOf.addEventListener('click', () => {
+    
+    percentToDecimal();
+
+});
+
+
+function percentToDecimal() {
     let currentValue = inputText.value.replaceAll(',','');
     currentValue = currentValue / 100;
     inputText.value = formatMassiveNumberResult(currentValue);
-    
+}
 
-});
 
 
 oneOverNumber.addEventListener('click', () => {
@@ -243,15 +268,30 @@ clearEntry.addEventListener('click', () => {
 });
 
 
-clearAll.addEventListener('click', () => {
-    inputText.value = "0";
-    displayEntered.textContent = "";
-    resetEverything();
+clearAll.addEventListener('click', (event) => {
+    
+    clearCalculator();
 
 });
 
 
-backspaceKey.addEventListener('click', () => {
+function clearCalculator() {
+    inputText.value = "0";
+    displayEntered.textContent = "";
+    resetEverything();
+
+}
+
+
+
+backspaceKey.addEventListener('click', (event) => {
+    
+    backspace();
+
+});
+
+
+function backspace() {
     if (inputText.value.length > 0) {
         rawInput = rawInput.slice(0, -1);
     } 
@@ -262,8 +302,7 @@ backspaceKey.addEventListener('click', () => {
 
     formatRawInput();
 
-
-});
+}
 
 
 function resetEverything() {  
@@ -276,6 +315,34 @@ function resetEverything() {
 
 }
 
+//keyboard support
+window.addEventListener('keydown', (event) => {
+    
+    const key = event.key;
+
+    if (key >= "0" && key <= "9" || key === ".") {
+        numberInputs(key);
+    }
+
+    else if (key === "/") operatorInputs("÷");
+    else if (key === "*") operatorInputs("×");
+    else if (key === "-") operatorInputs("−");
+    else if (key === "+") operatorInputs("+");
+    else if (key === "%") percentToDecimal();
+
+    else if (key === "Enter" || key === "=") {
+        event.preventDefault();
+        equalsOperator();
+    }
+
+    else if (key === "Backspace") {
+        backspace();
+    }
+
+    else if (key === "Escape") {
+        clearCalculator();
+    }
 
 
+});
 
