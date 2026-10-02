@@ -10,9 +10,13 @@ With keyboard support.
 
 I tried to pattern the behavior after Windows calculator. Except for % behavior.
 
-https://mypracticesautomationtesting.github.io/WebDevelopment-Calculator/
 
+This is from my Android phone:
 
 <img src="mobile calculator.jpg" height="300"></img>
 
+This is a demo video from my laptop:
+
 <video src="https://github.com/user-attachments/assets/a1b44ba9-b8a6-4c14-a69c-f9c5320d704c" width="100%" controls></video>
+
+To see this for yourself in action, head over to https://mypracticesautomationtesting.github.io/WebDevelopment-Calculator/
