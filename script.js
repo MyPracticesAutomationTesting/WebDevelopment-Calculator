@@ -268,7 +268,7 @@ clearEntry.addEventListener('click', () => {
 });
 
 
-clearAll.addEventListener('click', (event) => {
+clearAll.addEventListener('click', () => {
     
     clearCalculator();
 
