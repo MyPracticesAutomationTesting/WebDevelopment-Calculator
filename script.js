@@ -25,13 +25,15 @@ let result = 0;
 const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 16
 });
-
+let isFinalResult = false;
+let isConverted = false;
+let isSignFlipped = false;
 
 
 
 numberKeys.forEach((button) => {
     button.addEventListener('click', (event) => {
-      
+        
         numberInputs(event.target.textContent);
  
     });
@@ -41,6 +43,9 @@ numberKeys.forEach((button) => {
 
 
 function numberInputs(numberText) {
+    isFinalResult = false;
+    isConverted = false;
+
     if (firstNumber === null) {
         displayEntered.textContent = "";
     }
@@ -64,16 +69,21 @@ function numberInputs(numberText) {
             
     }
 
+    if (isSignFlipped) {
+        rawInput = rawInput * -1;
+        isSignFlipped = false;
+    }
+
     rawInput += numberText;
 
-    formatRawInput();
+    formatRawInput(rawInput);
 
 
 }
 
 
 
-function formatRawInput() {
+function formatRawInput(rawInput) {
     
     const [wholeNumber, decimal] = rawInput.split('.');
     
@@ -138,6 +148,7 @@ function operatorInputs(operator) {
 
 equalsKey.addEventListener('click', () => {
     equalsOperator();
+    
 
 });
 
@@ -158,6 +169,8 @@ function equalsOperator() {
         displayEntered.textContent = `${firstNumber} ${currentOperator} ${secondNumber} =`;
         resetEverything(); 
         isOperatorKeyClicked = true;
+        isFinalResult = true;
+        
 
      }
 
@@ -203,6 +216,8 @@ flipNumberSign.addEventListener('click', () => {
     let currentValue = inputText.value.replaceAll(',','');
     currentValue = currentValue * -1;
     inputText.value = formatMassiveNumberResult(currentValue);
+    isSignFlipped = true;
+    
     
 });
 
@@ -210,8 +225,8 @@ flipNumberSign.addEventListener('click', () => {
 //this is actually a bit different vs the % behavior of Windows calculator, NOT sure IF Windows calculator is intended to work the way it works now, OR maybe they have a bug?
 //e.g. in Windows calculator, try clicking a number and clicking %
 percentOf.addEventListener('click', () => {
-    
     percentToDecimal();
+    
 
 });
 
@@ -220,6 +235,7 @@ function percentToDecimal() {
     let currentValue = inputText.value.replaceAll(',','');
     currentValue = currentValue / 100;
     inputText.value = formatMassiveNumberResult(currentValue);
+    isConverted = true;
 }
 
 
@@ -229,7 +245,7 @@ oneOverNumber.addEventListener('click', () => {
     displayEntered.textContent = `1/(${currentValue})`;
     currentValue = 1 / currentValue;
     inputText.value = formatMassiveNumberResult(currentValue);
-    
+    isConverted = true;
 
 });
 
@@ -239,6 +255,7 @@ squareOf.addEventListener('click', () => {
     displayEntered.textContent = `sqr(${currentValue})`;
     currentValue = currentValue ** 2;
     inputText.value = formatMassiveNumberResult(currentValue);
+    isConverted = true;
 
 
 });
@@ -249,13 +266,14 @@ squareRoot.addEventListener('click', () => {
     displayEntered.textContent = `√(${currentValue})`;
     currentValue = Math.sqrt(currentValue);
     inputText.value = formatMassiveNumberResult(currentValue);
+    isConverted = true;
 
 });
 
 
 
 clearEntry.addEventListener('click', () => {
-    if (displayEntered.textContent.includes("=")) {    
+    if (isFinalResult) {    
         displayEntered.textContent = "";
         resetEverything();
         
@@ -283,25 +301,39 @@ function clearCalculator() {
 }
 
 
-
-backspaceKey.addEventListener('click', (event) => {
-    
+backspaceKey.addEventListener('click', () => {  
     backspace();
 
 });
 
 
 function backspace() {
-    if (inputText.value.length > 0) {
-        rawInput = rawInput.slice(0, -1);
-    } 
+    
+    if (isFinalResult) {
+        displayEntered.textContent = "";
+        return; //do NOT backspace for final result of operations, just like how it works in Windows calculator
 
-    if (rawInput === "") {
-        rawInput = "0";
-    }
+     }
+     else if (isConverted) {
+        return; //do NOT backspace for results of %, squared, and square root of, just like how it works in Windows calculator
+     }
+     
+     else { 
+        if (inputText.value.length > 0) {    
+            rawInput = rawInput.slice(0, -1);  
+            
+        } 
 
-    formatRawInput();
+        if (rawInput === "" || rawInput === "-") {
+            rawInput = "0";
+            
+        }
+    
+        formatRawInput(rawInput);
 
+     }
+
+     
 }
 
 
