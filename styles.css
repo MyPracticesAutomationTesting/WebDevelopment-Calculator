@@ -79,6 +79,7 @@ body {
     height: auto;
     padding-top: 10px;
     box-sizing: border-box;
+    flex-wrap: wrap;
 
 }
 
@@ -120,9 +121,6 @@ button {
     font-size: 0.6em;
 }
 
-.sqrt-line {
-    border-top: 2px solid black;
-}
 
 
 .clear-entry,
