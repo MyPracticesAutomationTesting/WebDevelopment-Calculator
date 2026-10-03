@@ -243,7 +243,7 @@ function adjustFontSize(length) {
     
 }
 
-
+//disable keys just like in Windows calculator
 function cannotDivideByZero() {
     inputText.value = "Heh, cannot divide by zero";
     operatorKey.forEach(key => {
@@ -276,11 +276,16 @@ function enableKeys() {
 
 
 flipNumberSign.addEventListener('click', () => {
-    let currentValue = inputText.value.replaceAll(',','');
-    currentValue = currentValue * -1;
-    rawInput = String(currentValue);
-    inputText.value = formatMassiveNumberResult(currentValue);
-
+    if (inputText.value === "0") {
+        return;
+    }
+    else {
+        let currentValue = inputText.value.replaceAll(',','');
+        currentValue = currentValue * -1;
+        rawInput = String(currentValue);
+        inputText.value = formatMassiveNumberResult(currentValue);
+    }
+    
     
 });
 
