@@ -44,6 +44,7 @@ numberKeys.forEach((button) => {
 function numberInputs(numberText) {
     isFinalResult = false;
     isConverted = false;
+    enableKeys();
 
     if (firstNumber === null) {
         displayEntered.textContent = "";
@@ -81,21 +82,36 @@ function formatRawInput(rawInput) {
     
     const [wholeNumber, decimal] = rawInput.split('.');
     
-    if (wholeNumber.length <= 16) { //limit to only 16 digits like the Windows calculator
+    if (rawInput.length <= 16) {  //limit to only 16 digits like the Windows calculator   
         if (rawInput.includes(".")) {
-            if (decimal.length <= 16) { //limit to only 16 digits like the Windows calculator
-                const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0);
-                inputText.value = `${formattedWholeNumber}.${decimal}`;
-            }
-            
+            const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0); //this produces a bug when you click the '9' key 16 times 
+            inputText.value = `${formattedWholeNumber}.${decimal}`; 
+          
         }
         else {
-            inputText.value = formatter.format(parseFloat(rawInput));
+            inputText.value = formatter.format(parseFloat(rawInput)); 
+            
         }
 
     }
+    else {
+        return;
+    }
     
+    adjustFontSize(inputText.value.length);
     
+}
+
+//NOT being used because it's breaking a lot of things, but keeping this for reference
+function formatWholeNumber(number) {
+    let resultWithCommas = "";
+
+    while (number.length > 3) {
+        resultWithCommas = "," + number.slice(-3) + resultWithCommas;
+        number = number.slice(0, -3);
+    }   
+    return number + resultWithCommas;
+
 }
 
 
@@ -111,7 +127,7 @@ operatorKey.forEach((button) => {
 
 
 function operatorInputs(operator) {
-    
+    isFinalResult = false;
     const currentInput = Number(inputText.value.replaceAll(',',''));
         
     if (firstNumber === null) {
@@ -122,20 +138,23 @@ function operatorInputs(operator) {
         secondNumber = currentInput;
             
         if (currentOperator === "÷" && secondNumber === 0) {
-            inputText.value = "Heh, cannot divide by zero";
+            cannotDivideByZero();
         }
         else {
             result = mathOperations(currentOperator, firstNumber, secondNumber);
             firstNumber = result;
             inputText.value = formatMassiveNumberResult(result);
+            
                 
         }
             
     }
         
+    adjustFontSize(inputText.value.length);
     currentOperator = operator;
     displayEntered.textContent = `${firstNumber} ${currentOperator}`;
     isOperatorKeyClicked = true;
+    
 
 }
 
@@ -153,14 +172,15 @@ function equalsOperator() {
         //firstNumber and currentOperator are already saved in memory
         secondNumber = Number(inputText.value.replaceAll(',',''));
         if (currentOperator === "÷" && secondNumber === 0) {
-            inputText.value = "Heh, cannot divide by zero";
+            cannotDivideByZero();
         }
         else {
             result = mathOperations(currentOperator, Number(firstNumber), secondNumber);
             inputText.value = formatMassiveNumberResult(result);
-           
+            
         }
 
+        adjustFontSize(inputText.value.length);
         displayEntered.textContent = `${firstNumber} ${currentOperator} ${secondNumber} =`;
         resetEverything(); 
         isOperatorKeyClicked = true;
@@ -203,8 +223,55 @@ function formatMassiveNumberResult(result) {
     }
     else {
         return formatter.format(result);
+        
     }
     
+}
+
+
+function adjustFontSize(length) {
+    
+    if (length >= 16) {
+        inputText.style.fontSize = "34px";
+        
+    }
+    else {
+        inputText.style.fontSize = "38px";
+        
+    }
+               
+    
+}
+
+
+function cannotDivideByZero() {
+    inputText.value = "Heh, cannot divide by zero";
+    operatorKey.forEach(key => {
+        key.disabled = true;
+    });
+    
+    flipNumberSign.disabled = true;
+    percentOf.disabled = true;
+    oneOverNumber.disabled = true;
+    squareOf.disabled = true;
+    squareRoot.disabled = true;
+    document.querySelector(".decimal").disabled = true;
+
+
+}
+
+
+function enableKeys() {
+    operatorKey.forEach(key => {
+        key.disabled = false;
+    });
+    
+    flipNumberSign.disabled = false;
+    percentOf.disabled = false;
+    oneOverNumber.disabled = false;
+    squareOf.disabled = false;
+    squareRoot.disabled = false;
+    document.querySelector(".decimal").disabled = false;
 }
 
 
@@ -213,7 +280,7 @@ flipNumberSign.addEventListener('click', () => {
     currentValue = currentValue * -1;
     rawInput = String(currentValue);
     inputText.value = formatMassiveNumberResult(currentValue);
-    
+
     
 });
 
@@ -232,6 +299,8 @@ function percentToDecimal() {
     currentValue = currentValue / 100;
     inputText.value = formatMassiveNumberResult(currentValue);
     isConverted = true;
+
+
 }
 
 
@@ -269,6 +338,7 @@ squareRoot.addEventListener('click', () => {
 
 
 clearEntry.addEventListener('click', () => {
+    enableKeys();
     if (isFinalResult) {    
         displayEntered.textContent = "";
         resetEverything();
@@ -283,7 +353,7 @@ clearEntry.addEventListener('click', () => {
 
 
 clearAll.addEventListener('click', () => {
-    
+    enableKeys();
     clearCalculator();
 
 });
@@ -340,6 +410,7 @@ function resetEverything() {
     secondNumber = 0;
     currentOperator = "";
     result = 0;
+    
     
 
 }
