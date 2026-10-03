@@ -27,7 +27,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 });
 let isFinalResult = false;
 let isConverted = false;
-let isSignFlipped = false;
 
 
 
@@ -69,15 +68,10 @@ function numberInputs(numberText) {
             
     }
 
-    if (isSignFlipped) {
-        rawInput = rawInput * -1;
-        isSignFlipped = false;
-    }
-
     rawInput += numberText;
-
+    
     formatRawInput(rawInput);
-
+    
 
 }
 
@@ -100,6 +94,7 @@ function formatRawInput(rawInput) {
         }
 
     }
+    
     
 }
 
@@ -173,6 +168,7 @@ function equalsOperator() {
         
 
      }
+     
 
 }
 
@@ -215,19 +211,19 @@ function formatMassiveNumberResult(result) {
 flipNumberSign.addEventListener('click', () => {
     let currentValue = inputText.value.replaceAll(',','');
     currentValue = currentValue * -1;
+    rawInput = String(currentValue);
     inputText.value = formatMassiveNumberResult(currentValue);
-    isSignFlipped = true;
     
     
 });
 
 
+
 //this is actually a bit different vs the % behavior of Windows calculator, NOT sure IF Windows calculator is intended to work the way it works now, OR maybe they have a bug?
-//e.g. in Windows calculator, try clicking a number and clicking %
+//e.g. in Windows calculator, click a number and next click %, it results in 0
 percentOf.addEventListener('click', () => {
     percentToDecimal();
     
-
 });
 
 
@@ -319,7 +315,7 @@ function backspace() {
      }
      
      else { 
-        if (inputText.value.length > 0) {    
+        if (inputText.value.length > 0) {     
             rawInput = rawInput.slice(0, -1);  
             
         } 
@@ -330,6 +326,7 @@ function backspace() {
         }
     
         formatRawInput(rawInput);
+        
 
      }
 
