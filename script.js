@@ -232,7 +232,7 @@ function formatMassiveNumberResult(result) {
 function adjustFontSize(length) {
     
     if (length >= 16) {
-        inputText.style.fontSize = "34px";
+        inputText.style.fontSize = "28px";
         
     }
     else {
@@ -354,6 +354,7 @@ clearEntry.addEventListener('click', () => {
 
 clearAll.addEventListener('click', () => {
     enableKeys();
+    inputText.style.fontSize = "38px"; //temporary plug-in
     clearCalculator();
 
 });
