@@ -84,13 +84,13 @@ function formatRawInput(rawInput) {
     
     if (rawInput.length <= 16) {  //limit to only 16 digits like the Windows calculator   
         if (rawInput.includes(".")) {
-            const formattedWholeNumber = formatter.format(parseFloat(wholeNumber) || 0); //this produces a bug when you click the '9' key 16 times 
-            inputText.value = `${formattedWholeNumber}.${decimal}`; 
+            const formattedWholeNumber = formatter.format(wholeNumber || 0); 
+            inputText.value = `${formattedWholeNumber}.${decimal}`;
+            
           
         }
         else {
-            inputText.value = formatter.format(parseFloat(rawInput)); 
-            
+            inputText.value = formatter.format(rawInput); 
         }
 
     }
@@ -100,18 +100,6 @@ function formatRawInput(rawInput) {
     
     adjustFontSize(inputText.value.length);
     
-}
-
-//NOT being used because it's breaking a lot of things, but keeping this for reference
-function formatWholeNumber(number) {
-    let resultWithCommas = "";
-
-    while (number.length > 3) {
-        resultWithCommas = "," + number.slice(-3) + resultWithCommas;
-        number = number.slice(0, -3);
-    }   
-    return number + resultWithCommas;
-
 }
 
 
