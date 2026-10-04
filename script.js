@@ -23,7 +23,7 @@ let secondNumber = 0;
 let currentOperator = "";
 let result = 0;
 const formatter = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 16
+    maximumFractionDigits: 12  //12 is a temporary solution, it doesn't solve all the edge cases relating to how many digits of decimal points to display
 });
 let isFinalResult = false;
 let isConverted = false;
@@ -69,8 +69,13 @@ function numberInputs(numberText) {
             
     }
 
-    rawInput += numberText;
-    
+    if (rawInput.replace(".",'').length < 16) { //limit to only 16 digits excluding decimal point, like the Windows calculator
+        rawInput += numberText;
+    }
+    else {
+        return;
+    }
+
     formatRawInput(rawInput);
     
 
@@ -82,22 +87,16 @@ function formatRawInput(rawInput) {
     
     const [wholeNumber, decimal] = rawInput.split('.');
     
-    if (rawInput.length <= 16) {  //limit to only 16 digits like the Windows calculator   
-        if (rawInput.includes(".")) {
-            const formattedWholeNumber = formatter.format(wholeNumber || 0); 
-            inputText.value = `${formattedWholeNumber}.${decimal}`;
+     if (rawInput.includes(".")) {
+        const formattedWholeNumber = formatter.format(wholeNumber); 
+        inputText.value = `${formattedWholeNumber}.${decimal}`;
             
           
-        }
-        else {
-            inputText.value = formatter.format(rawInput); 
-        }
-
     }
     else {
-        return;
+        inputText.value = formatter.format(rawInput); 
     }
-    
+ 
     adjustFontSize(inputText.value.length);
     
 }
@@ -163,8 +162,9 @@ function equalsOperator() {
             cannotDivideByZero();
         }
         else {
-            result = mathOperations(currentOperator, Number(firstNumber), secondNumber);
+            result = mathOperations(currentOperator, firstNumber, secondNumber);
             inputText.value = formatMassiveNumberResult(result);
+            
             
         }
 
@@ -199,20 +199,23 @@ function mathOperations(operator, firstNumber, secondNumber) {
             break;
 
     }
-
+    
     return result;
 
 }
 
 
 function formatMassiveNumberResult(result) {
-    if (Math.abs(result) >= 1e15) { //to take care of massive results just like in Windows calculator
+    if (Math.abs(result) >= 1e15) { //to take care of massive results just like in Windows calculator    
+        
         return result.toExponential(15);
     }
     else {
+        
         return formatter.format(result);
         
     }
+    
     
 }
 

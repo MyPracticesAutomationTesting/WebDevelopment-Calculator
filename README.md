@@ -10,7 +10,7 @@ With keyboard support.
 
 I tried to pattern the behavior after Windows calculator, except for % behavior. In Windows calculator, IF you press a number key and press % key, it results in 0.
 
-I have a bug left where IF it's already exponential result and you press the 1/x key OR squared key OR square-root key, it results in 0. In Windows calculator, this still computes. I still see a bit more not very noticeable bugs relating to exponential results. The QA tester in me wants to fix them, but I decide to leave them for now because I want to move on. I'm still a beginner and there are still higher mountains to climb.
+I have a bug left where IF it's already exponential result and you press the 1/x key OR squared key OR square-root key, it results in 0. In Windows calculator, this still computes. I still see a bit more bugs relating to other edge cases like this. The QA tester in me wants to fix them, but I decide to leave them for now because I want to move on. I'm still a beginner web developer learner and there are still higher mountains to climb.
 
 To see this for yourself in action, head over to https://mypracticesautomationtesting.github.io/WebDevelopment-Calculator/
 
