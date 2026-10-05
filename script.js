@@ -419,6 +419,7 @@ window.addEventListener('keydown', (event) => {
 
     if (key >= "0" && key <= "9" || key === ".") {
         numberInputs(key);
+
     }
 
     else if (key === "/") operatorInputs("÷");
