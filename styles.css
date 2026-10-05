@@ -109,6 +109,16 @@ button {
 
 }
 
+button:hover {
+    opacity: 80%;
+}
+
+
+button:active {
+    opacity: 60%;
+}
+
+
 .number,
 .sign {
     background-color:white;
